@@ -1,0 +1,12 @@
+# This is a generated file and its contents are an internal implementation detail.
+# The download step will be re-executed if anything in this file changes.
+# No other meaning or use of this file is supported.
+
+method=url
+command=/usr/bin/cmake;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;/home/etienne/tpAR-v2023.1.0-rc4/3rdparty/glm/src/glm-stamp/download-glm.cmake;COMMAND;/usr/bin/cmake;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;/home/etienne/tpAR-v2023.1.0-rc4/3rdparty/glm/src/glm-stamp/verify-glm.cmake;COMMAND;/usr/bin/cmake;-DCMAKE_MESSAGE_LOG_LEVEL=VERBOSE;-P;/home/etienne/tpAR-v2023.1.0-rc4/3rdparty/glm/src/glm-stamp/extract-glm.cmake
+source_dir=/home/etienne/tpAR-v2023.1.0-rc4/3rdparty/glm/src/glm
+work_dir=/home/etienne/tpAR-v2023.1.0-rc4/3rdparty/glm/src
+url(s)=http://devernay.free.fr/hacks/glm/glm-0.3.2.tar.gz
+hash=
+      no_extract=
+

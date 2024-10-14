@@ -1,0 +1,1 @@
+cmd='./configure;--prefix=/home/etienne/tpAR-v2023.1.0-rc4/3rdparty/glm/build;--enable-shared'

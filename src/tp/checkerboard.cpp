@@ -51,7 +51,7 @@ int main( int argc, char** argv )
     // Default pattern is chessboard
     Pattern pattern = CHESSBOARD;
 
-
+    const auto imageFilename = string(argv[1]);
 
     /******************************************************************/
     /* READ THE INPUT PARAMETERS - DO NOT MODIFY                      */
@@ -63,9 +63,6 @@ int main( int argc, char** argv )
         return EXIT_FAILURE;
     }
 
-
-
-
     /******************************************************************/
     /* PART TO DEVELOP                                                  */
     /******************************************************************/
@@ -74,23 +71,27 @@ int main( int argc, char** argv )
     // create a window to display the image --> see namedWindow
     /******************************************************************/
 
+    namedWindow(WINDOW_NAME,cv::WINDOW_AUTOSIZE);
+    imshow(WINDOW_NAME, view);
 
     /******************************************************************/
     // read the input image from file into "view" --> see imread
     /******************************************************************/
-
+    
+    view = imread(inputFilename, cv::IMREAD_COLOR);
 
     //Measure the execution time, get time before function call
-    auto t = ( double ) getTickCount( );
+    
+    auto t = (double)getTickCount( );
 
     /******************************************************************/
     // call the function that detects the chessboard on the image
     // found = detectChessboard...
     /******************************************************************/
-
+    found = detectChessboard( view, pointbuf, boardSize, pattern);
 
     // get time after function call and display info
-    t = ( ( double ) getTickCount( ) - t ) / getTickFrequency( );
+    t = ((double)getTickCount() - t) / getTickFrequency();
 
     cout << ( ( !found ) ? ( "No " ) : ( "" ) ) << "chessboard detected!" << endl;
     cout << "Chessboard detection took " << t * 1000 << "ms" << endl;
@@ -100,12 +101,14 @@ int main( int argc, char** argv )
     // if the chessboard is found draw the cornerns on top of it
     // --> see drawChessboardCorners
     /******************************************************************/
-
+    if (found){
+        drawChessboardCorners(view, boardSize, Mat(pointbuf), found);
+    }
 
     /******************************************************************/
     // show the image inside the window --> see imshow
     /******************************************************************/
-
+    imshow(WINDOW_NAME, view);
 
     // wait for user input before ending --> see waitKey
     waitKey( -1 );

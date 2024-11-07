@@ -37,7 +37,7 @@ bool detectChessboard( const Mat &rgbimage, vector<Point2f> &pointbuf, const Siz
             // detect the chessboard --> see findChessboardCorners
             // found = ...
             /******************************************************************/
-
+            found= findChessboardCorners( rgbimage, boardSize, pointbuf);
 
             // if a chessboard is found refine the position of the points in a window 11x11 pixel
             // use the default value for the termination criteria --> TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 )
@@ -49,13 +49,14 @@ bool detectChessboard( const Mat &rgbimage, vector<Point2f> &pointbuf, const Siz
                 // convert the image in "rgbimage" to gray level and save it in "viewGrey"
                 // --> cvtColor with CV_BGR2GRAY option
                 /******************************************************************/
-
+                cvtColor( rgbimage, viewGrey, CV_BGR2GRAY );
 
                 /******************************************************************/
                 // refine the corner location in "pointbuf" using "viewGrey"
                 // --> see cornerSubPix
                 /******************************************************************/
-
+                cornerSubPix( viewGrey, pointbuf, Size(11,11),
+                Size(-1,-1), TermCriteria( CV_TERMCRIT_EPS+CV_TERMCRIT_ITER, 30, 0.1 ));
             }
             break;
 
@@ -65,7 +66,7 @@ bool detectChessboard( const Mat &rgbimage, vector<Point2f> &pointbuf, const Siz
             // detect the circles --> see findCirclesGrid
             // found = ...
             /******************************************************************/
-
+            found = findCirclesGrid( rgbimage, boardSize, pointbuf );
 
             break;
 
@@ -75,7 +76,7 @@ bool detectChessboard( const Mat &rgbimage, vector<Point2f> &pointbuf, const Siz
             // detect the circles --> see findCirclesGrid using the options CALIB_CB_ASYMMETRIC_GRID | CALIB_CB_CLUSTERING
             // found = ...
             /******************************************************************/
-
+            found = findCirclesGrid( rgbimage, boardSize, pointbuf,  CALIB_CB_ASYMMETRIC_GRID | CALIB_CB_CLUSTERING);
 
             break;
 

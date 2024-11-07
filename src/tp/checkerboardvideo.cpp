@@ -64,22 +64,23 @@ int main(int argc, char** argv)
     /******************************************************************/
     // create a window to display the image --> see namedWindow
     /******************************************************************/
-
+    namedWindow(WINDOW_NAME,cv::WINDOW_AUTOSIZE);
 
     /******************************************************************/
     // read the input video with capture
     /******************************************************************/
-
+    capture.open(inputFilename);
 
     /******************************************************************/
     // check it is really opened
     /******************************************************************/
-
-
-
-
-
-
+    if(!capture.isOpened())
+    {
+        cerr << "Unable to open the video file" << endl;
+        return EXIT_FAILURE;
+        
+    }
+    
     // processing loop
     while(true)
     {
@@ -87,11 +88,21 @@ int main(int argc, char** argv)
         /******************************************************************/
         // get the new frame from capture and copy it to view
         /******************************************************************/
-
+        capture = cvCaptureFromCAM( -1 );
+        if( capture )
+        {
+        while( true )
+        {
+        frame = cvQueryFrame( capture )
+        }
 
         /******************************************************************/
         // if no more images to process exit the loop
         /******************************************************************/
+        if( !frame.empty() )
+        { detectAndDisplay( frame ); }
+        else
+        { printf(" --(!) No captured frame -- Break!"); break; }
 
 
 
@@ -102,7 +113,7 @@ int main(int argc, char** argv)
         // call the function that detects the chessboard on the image
         // found = detectChessboard...
         /******************************************************************/
-
+        found = detectChessboard(frame, pointbuf, boardSize, pattern)
 
         // get time after function call and display info
         t = ((double)getTickCount() - t) / getTickFrequency();
@@ -114,12 +125,14 @@ int main(int argc, char** argv)
         // if the chessboard is found draw the corners on top of it
         // --> see drawChessboardCorners
         /******************************************************************/
-
+        if(found){
+            drawChessboardCorners( frame, boardSize, Mat(pointbuf), found );
+            }
 
         /******************************************************************/
         // show the image inside the window --> see imshow
         /******************************************************************/
-
+        imshow(WINDOW_NAME, frame);
 
         // wait 20ms for user input before processing the next frame
         // Any user input will stop the execution

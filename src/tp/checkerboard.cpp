@@ -72,13 +72,13 @@ int main( int argc, char** argv )
     /******************************************************************/
 
     namedWindow(WINDOW_NAME,cv::WINDOW_AUTOSIZE);
-    imshow(WINDOW_NAME, view);
 
     /******************************************************************/
     // read the input image from file into "view" --> see imread
     /******************************************************************/
     
     view = imread(inputFilename, cv::IMREAD_COLOR);
+    imshow(WINDOW_NAME, view);
 
     //Measure the execution time, get time before function call
     

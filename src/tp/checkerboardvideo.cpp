@@ -85,38 +85,35 @@ int main(int argc, char** argv)
     while(true)
     {
         Mat view;
+        Mat frame;
         /******************************************************************/
         // get the new frame from capture and copy it to view
         /******************************************************************/
-        capture = cvCaptureFromCAM( -1 );
-        if( capture )
-        {
-        while( true )
-        {
-        frame = cvQueryFrame( capture )
-        }
+        
+        auto t = (double)getTickCount();
+        t = ((double)getTickCount() - t) / getTickFrequency();
 
+        if( !capture.read(frame) ){
+            cout<<"chessboard detection took"<<t*1000<<"ms"<<endl;
+            break;
+        }
+        
         /******************************************************************/
         // if no more images to process exit the loop
         /******************************************************************/
-        if( !frame.empty() )
-        { detectAndDisplay( frame ); }
-        else
-        { printf(" --(!) No captured frame -- Break!"); break; }
-
-
+        
 
         // Measure the execution time, get time before function call
-        auto t = (double)getTickCount();
+        //auto t = (double)getTickCount();
 
         /******************************************************************/
         // call the function that detects the chessboard on the image
         // found = detectChessboard...
         /******************************************************************/
-        found = detectChessboard(frame, pointbuf, boardSize, pattern)
+        found = detectChessboard(frame, pointbuf, boardSize, pattern);
 
         // get time after function call and display info
-        t = ((double)getTickCount() - t) / getTickFrequency();
+        //t = ((double)getTickCount() - t) / getTickFrequency();
 
         cout << ((!found) ? ("No ") : ("")) << "chessboard detected!" << endl;
         cout << "Chessboard detection took " << t * 1000 << "ms" << endl;
@@ -138,12 +135,13 @@ int main(int argc, char** argv)
         // Any user input will stop the execution
         if(waitKey(10) >= 0)
             break;
+    
     }
-
     /******************************************************************/
     // release the video resource
     /******************************************************************/
-
+    capture.release();
+    destroyAllWindows();
 
     return EXIT_SUCCESS;
 }
@@ -225,3 +223,4 @@ bool parseArgs(int argc, char** argv, Size& boardSize, string& inputFilename, Pa
 
     return true;
 }
+

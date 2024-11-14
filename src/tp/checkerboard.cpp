@@ -78,7 +78,6 @@ int main( int argc, char** argv )
     /******************************************************************/
     
     view = imread(inputFilename, cv::IMREAD_COLOR);
-    imshow(WINDOW_NAME, view);
 
     //Measure the execution time, get time before function call
     

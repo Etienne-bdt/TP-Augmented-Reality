@@ -91,7 +91,6 @@ int main(int argc, char** argv)
     // init the Camera loading the calibration parameters
     //******************************************************************/
 
-
     // processing loop
     while(true)
     {
@@ -106,7 +105,6 @@ int main(int argc, char** argv)
         if(!capture.read(view)){
             return EXIT_FAILURE;
         }
-
 
         //******************************************************************/
         // process the image with the process method

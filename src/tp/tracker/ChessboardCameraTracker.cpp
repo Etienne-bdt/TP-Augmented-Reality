@@ -33,7 +33,14 @@ bool ChessboardCameraTracker::process(
     // undistort the input image. view at the end must contain the undistorted version
     // of the image.
     //******************************************************************/
-    undistort(temp, view, cam.matK, cam.distCoeff);
+    cout<<cam.distCoeff<<endl;
+    cout<<cam.matK<<endl;
+    if (!cam.matK.empty() && !cam.distCoeff.empty()) {
+        undistort(temp, view, cam.matK, cam.distCoeff);
+    } else {
+        cerr << "Camera matrix or distortion coefficients are empty!" << endl;
+        return false;
+    }
 
 
     //******************************************************************/

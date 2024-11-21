@@ -28,18 +28,17 @@ bool Camera::init(const std::string& calibFilename)
     }
 
 
-
-
-
     /******************************************************************/
     // load the camera_matrix in matK
     /******************************************************************/
+    
     fs["camera_matrix"] >> matK;
 
 
     /******************************************************************/
     // load the distortion_coefficients in distCoeff
     /******************************************************************/
+
     fs["distortion_coefficients"] >> distCoeff;
     /******************************************************************/
     // load image_width and image_height in imageSize.[width|height]
@@ -47,9 +46,10 @@ bool Camera::init(const std::string& calibFilename)
     fs["image_width"] >> imageSize.width;
     fs["image_height"] >> imageSize.height;
 
+    fs.release();
 
-//     cout << matK << endl;
-//     cout << distCoeff << endl;
+    cout << matK << endl;
+    cout << distCoeff << endl;
 
     return true;
 }

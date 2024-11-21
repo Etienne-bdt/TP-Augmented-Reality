@@ -122,7 +122,7 @@ void drawReferenceSystem( cv::Mat &rgbimage, const Camera& cam, const cv::Mat &p
     // if it is true we pass a 1x5 zero vector, otherwise the distortion
     //  parameter of cam
     //******************************************************************/
-    myProjectPoints(vertex3D, poseMat, cam.matK, (alreadyUndistorted) ? Mat::zeros(1, 5, CV_32F) : cam.dist, imgRefPts);
+    myProjectPoints(vertex3D, poseMat, cam.matK, (alreadyUndistorted) ? Mat::zeros(1, 5, CV_32F) : cam.distCoeff, imgRefPts);
 
 
 

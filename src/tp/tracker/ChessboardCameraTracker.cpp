@@ -32,7 +32,7 @@ bool ChessboardCameraTracker::process(
     // undistort the input image. view at the end must contain the undistorted version
     // of the image.
     //******************************************************************/
-    undistort(view, view, cam.matK, cam.dist);
+    undistort(view, view, cam.matK, cam.distCoeff);
 
 
     //******************************************************************/

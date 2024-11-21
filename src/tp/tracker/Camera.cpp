@@ -16,12 +16,16 @@ bool Camera::init(const std::string& calibFilename)
     /******************************************************************/
     // open the file storage with the given filename
     /******************************************************************/
-
+    Filestorage fs;
+    fs.open(calibFilename, Filestorage::READ);
 
     /******************************************************************/
     // check if the file storage has been opened correctly
     /******************************************************************/
-
+    if(!fs.isOpened()){
+        cout<<"Error opening File"<<endl;
+        return false;
+    }
 
 
 
@@ -30,15 +34,18 @@ bool Camera::init(const std::string& calibFilename)
     /******************************************************************/
     // load the camera_matrix in matK
     /******************************************************************/
+    fs["camera_matrix"] >> matK;
+
 
     /******************************************************************/
     // load the distortion_coefficients in distCoeff
     /******************************************************************/
-
+    fs["distortion_coefficients"] >> distCoeff;
     /******************************************************************/
     // load image_width and image_height in imageSize.[width|height]
     /******************************************************************/
-
+    fs["image_width"] >> imageSize.width;
+    fs["image_height"] >> imageSize.height;
 
 
 //     cout << matK << endl;

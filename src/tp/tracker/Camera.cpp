@@ -16,8 +16,8 @@ bool Camera::init(const std::string& calibFilename)
     /******************************************************************/
     // open the file storage with the given filename
     /******************************************************************/
-    Filestorage fs;
-    fs.open(calibFilename, Filestorage::READ);
+    FileStorage fs;
+    fs.open(calibFilename, FileStorage::READ);
 
     /******************************************************************/
     // check if the file storage has been opened correctly

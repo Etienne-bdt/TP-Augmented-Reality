@@ -27,12 +27,13 @@ bool ChessboardCameraTracker::process(
 
     // contains the points detected on the chessboard
     vector<Point2f> corners;
-
+    Mat temp;
+    temp = view.clone();
     //******************************************************************/
     // undistort the input image. view at the end must contain the undistorted version
     // of the image.
     //******************************************************************/
-    undistort(view, view, cam.matK, cam.distCoeff);
+    undistort(temp, view, cam.matK, cam.distCoeff);
 
 
     //******************************************************************/

@@ -38,7 +38,7 @@ bool ChessboardCameraTracker::process(
     //******************************************************************/
     // detect the chessboard
     //******************************************************************/
-    found = detectChessboard(view, corners, boardsize, pattern);
+    found = detectChessboard(view, corners, boardSize, pattern);
 
     // cout << ( (!found ) ? ( "No " ) : ("") ) << "chessboard detected!" << endl;
 
@@ -61,7 +61,7 @@ bool ChessboardCameraTracker::process(
         // --> see findHomography
         // http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=homography#findhomography
         //******************************************************************/
-        findHomography(corners, objectPoints, CV_RANSAC);
+        Mat H = findHomography(corners, objectPoints, CV_RANSAC);
 
 //         cout << "H = " << H << endl << endl;
 //         cout << "corners =" << corners << endl << endl;

@@ -122,7 +122,7 @@ void drawReferenceSystem( cv::Mat &rgbimage, const Camera& cam, const cv::Mat &p
     // if it is true we pass a 1x5 zero vector, otherwise the distortion
     //  parameter of cam
     //******************************************************************/
-    myProjectPoints(vertex3D, pose, cam.matK, (alreadyUndistorted) ? Mat::zeros(1, 5, CV_32F) : cam.dist, imgRefPts);
+    myProjectPoints(vertex3D, poseMat, cam.matK, (alreadyUndistorted) ? Mat::zeros(1, 5, CV_32F) : cam.dist, imgRefPts);
 
 
 
@@ -138,20 +138,20 @@ void drawReferenceSystem( cv::Mat &rgbimage, const Camera& cam, const cv::Mat &p
     // draw the line of the x-axis and put "X" at the end
     //******************************************************************/
     line(rgbimage, imgRefPts[0], imgRefPts[1], Scalar(0, 0, 255), thickness);
-    putText(rgbimage, "X", imgRefPts[1]);
+    putText(rgbimage, "X", imgRefPts[1], FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 2);
 
 
     //******************************************************************/
     // draw the line of the y-axis and put "Y" at the end
     //******************************************************************/
     line(rgbimage, imgRefPts[0], imgRefPts[2], Scalar(0,255,0), thickness);
-    putText(rgbimage, "Y", imgRefPts[2]);
+    putText(rgbimage, "Y", imgRefPts[2], FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0), 2);
 
     //******************************************************************/
     // draw the line of the z-axis and put "Z" at the end
     //******************************************************************/
     line(rgbimage, imgRefPts[0], imgRefPts[3], Scalar(255,0,0), thickness);
-    putText(rgbimage, "Z", imgRefPts[3]);
+    putText(rgbimage, "Z", imgRefPts[3], FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 2);
 
 }
 

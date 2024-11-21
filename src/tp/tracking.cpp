@@ -103,7 +103,7 @@ int main(int argc, char** argv)
         /******************************************************************/
         // if no more images to process exit the loop
         /******************************************************************/
-        if(!capture.view(view)){
+        if(!capture.read(view)){
             return EXIT_FAILURE;
         }
 

@@ -18,18 +18,6 @@ void help(const char* programName);
 // parse the input command line arguments
 bool parseArgs(int argc, char** argv, Size& boardSize, string& inputFilename, Pattern& pattern);
 
-
-
-void calcChessboardCorners(Size boardSize, float squareSize, vector<Point3f>& corners){
-    corners.clear();
-    
-    for( int i = 0; i < boardSize.height; ++i )
-        for( int j = 0; j < boardSize.width; ++j )
-            corners.push_back(Point3f(float( j*squareSize ), float( i*squareSize ), 0));
-
-    }
-
-
 int main(int argc, char** argv)
 {
     /******************************************************************/
@@ -110,8 +98,7 @@ int main(int argc, char** argv)
     // size of the squares is 25
     // call to calcChessboardCorners
     /******************************************************************/
-    calcChessboardCorners(boardSize, 25, objectPoints);
-
+    calcChessboardCorners(boardSize, 25.0, objectPoints);
     // processing loop
     while(true)
     {
@@ -124,58 +111,58 @@ int main(int argc, char** argv)
         auto t = (double)getTickCount();
         t = ((double)getTickCount() - t) / getTickFrequency();
 
-        if( !capture.read(frame) ){
+        if( !capture.read(view) ){
             cout<<"chessboard detection took"<<t*1000<<"ms"<<endl;
             break;
         }
-        
 
         /******************************************************************/
         // if no more images to process exit the loop
         /******************************************************************/
 
-
-
         /******************************************************************/
         // call the function that detects the chessboard on the image
         /******************************************************************/
-        found = detectChessboard(frame, pointbuf, boardSize, pattern);
-
+        found = detectChessboard(view, pointbuf, boardSize, pattern);
 
         cout << ((!found) ? ("No ") : ("")) << "chessboard detected!" << endl;
 
-        // if a chessboard is found estimate the homography and rectify the image
-        if(found)
-        {
-            /******************************************************************/
-            // estimate the homography
-            // --> see findHomography
-            // http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=homography#findhomography
-            /******************************************************************/
-            Mat H = findHomography( objectCorners, pointbuf, CV_RANSAC);
+    
 
-            /******************************************************************/
-            // use the estimated homography to rectify the image
-            // --> see warpPerspective
-            // http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#void warpPerspective(InputArray src, OutputArray dst, InputArray M, Size dsize, int flags, int borderMode, const Scalar& borderValue)
-            /******************************************************************/
-            warpPerspective(view,rectified,H,rectified.size());
-        }
-        else
-        {
-            /******************************************************************/
-            // otherwise copy the original image in rectified
-            // Mat.copyTo()
-            /******************************************************************/
-            view.copyTo(rectified);
-        }
+        // if a chessboard is found estimate the homography and rectify the image
+        if (found) {
+            // Check point buffer consistency
+            if (objectPoints.size() == pointbuf.size() && !objectPoints.empty()) {
+                /******************************************************************/
+                // estimate the homography
+                // --> see findHomography
+                // http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=homography#findhomography
+                /******************************************************************/
+                Mat H = findHomography( objectPoints, pointbuf, CV_RANSAC);
+
+                /******************************************************************/
+                // use the estimated homography to rectify the image
+                // --> see warpPerspective
+                // http://docs.opencv.org/modules/imgproc/doc/geometric_transformations.html#void warpPerspective(InputArray src, OutputArray dst, InputArray M, Size dsize, int flags, int borderMode, const Scalar& borderValue)
+                /******************************************************************/
+                warpPerspective(view, rectified, H, view.size());
+            }
+            else
+            {
+                /******************************************************************/
+                // otherwise copy the original image in rectified
+                // Mat.copyTo()
+                /******************************************************************/
+                cerr << "Mismatch in point sizes or points are empty!" << endl;
+                view.copyTo(rectified);
+            }
 
         /******************************************************************/
         // if the chessboard is found draw the cornerns on top of it
         // --> see drawChessboardCorners
         /******************************************************************/
         if(found){
-            drawChessboardCorners( frame, boardSize, Mat(pointbuf), found );
+            drawChessboardCorners( view, boardSize, Mat(pointbuf), found );
             }
 
         /******************************************************************/
@@ -190,11 +177,11 @@ int main(int argc, char** argv)
 
         // wait 20ms for user input before processing the next frame
         // Any user input will stop the execution
-        if(waitKey(10) >= 0)
+        if(waitKey(20) >= 0)
             break;
-    }
+    }}
 
-    /******************************************************************/
+    /***********fzeos*******************************************************/
     // release the video resource
     /******************************************************************/
     capture.release();

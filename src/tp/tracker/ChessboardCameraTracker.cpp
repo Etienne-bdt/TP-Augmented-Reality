@@ -32,13 +32,13 @@ bool ChessboardCameraTracker::process(
     // undistort the input image. view at the end must contain the undistorted version
     // of the image.
     //******************************************************************/
-
+    undistort(view, view, cam.matK, cam.dist);
 
 
     //******************************************************************/
     // detect the chessboard
     //******************************************************************/
-
+    found = detectChessboard(view, corners, boardsize, pattern);
 
     // cout << ( (!found ) ? ( "No " ) : ("") ) << "chessboard detected!" << endl;
 
@@ -54,14 +54,14 @@ bool ChessboardCameraTracker::process(
         // create the set of 2D (arbitrary) points of the checkerboard
         // call to calcChessboardCorners
         //******************************************************************/
-
+        calcChessboardCorners(boardSize,25,objectPoints,pattern);
 
         //******************************************************************/
         // estimate the homography
         // --> see findHomography
         // http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=homography#findhomography
         //******************************************************************/
-
+        findHomography(corners, objectPoints, CV_RANSAC);
 
 //         cout << "H = " << H << endl << endl;
 //         cout << "corners =" << corners << endl << endl;
@@ -70,7 +70,7 @@ bool ChessboardCameraTracker::process(
         //******************************************************************/
         // decompose the homography
         //******************************************************************/
-
+        decomposeHomography(H, cam.matK, pose);
     }
 
     return found;

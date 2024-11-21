@@ -92,7 +92,7 @@ int main(int argc, char** argv)
         
         auto t = (double)getTickCount();
         t = ((double)getTickCount() - t) / getTickFrequency();
-
+        
         if( !capture.read(frame) ){
             cout<<"No Frame to detect"<<endl;
             break;

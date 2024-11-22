@@ -331,7 +331,7 @@ void calcChessboardCorners3D( const Size &boardSize, float squareSize, vector<Po
                     // create a Point3f(x,y,0) according to the position j,i and a square
                     // size of squareSize. Add it to corners (using push_back...)
                     /******************************************************************/
-
+                    corners.push_back(Point3f(j * squareSize, i * squareSize, 0));
 
 
                 }
@@ -347,7 +347,7 @@ void calcChessboardCorners3D( const Size &boardSize, float squareSize, vector<Po
                     // that x is generate using the formula (2*j + i % 2)*squareSize
                     //  Add it to corners (using push_back...)
                     /******************************************************************/
-
+                    corners.push_back(Point3f((2*j+ i%2)*squareSize, i*squareSize, 0));
 
 
                 }

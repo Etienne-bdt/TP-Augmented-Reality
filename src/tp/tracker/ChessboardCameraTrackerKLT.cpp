@@ -32,15 +32,15 @@ bool ChessboardCameraTrackerKLT::process(
     // undistort the input image. view at the end must contain the undistorted version
     // of the image.
     //******************************************************************/
-
-
+    undistort(temp, view, cam.matK, cam.distCoeff);
+    
     // contains the grey version of the current frame
     Mat viewGrey;
 
     //******************************************************************/
     // convert the current left frame into greylevel image
     //******************************************************************/
-
+    cvtColor(view, viewGrey, CV_BGR2GRAY);
 
     // if we have too few points or none
     if(_corners.size() < 10)
@@ -48,7 +48,7 @@ bool ChessboardCameraTrackerKLT::process(
         //******************************************************************/
         // detect the chessboard
         //******************************************************************/
-
+        found = detectChessboard(view, _corners, boardSize, pattern);
 
         if(found)
         {
@@ -56,12 +56,11 @@ bool ChessboardCameraTrackerKLT::process(
             // generate the points on the chessboard, this time 3D points
             // see --> calcChessboardCorners3D
             //******************************************************************/
-
-
+            calcChessboardCorners3D(boardSize, 1.0, _objectPoints, pattern);
             //******************************************************************/
             // compute the pose of the camera using mySolvePnPRansac (utility.hpp))
             //******************************************************************/
-
+            mySolvePnPRansac(_objectPoints, _corners, cam.matK, cam.distCoeff, pose);
         }
     }
     else
@@ -84,7 +83,7 @@ bool ChessboardCameraTrackerKLT::process(
         //******************************************************************/
         // estimate the new position of the tracked points using calcOpticalFlowPyrLK
         //******************************************************************/
-
+        calcOpticalFlowPyrLK(_prevGrey, viewGrey, _corners, currPts, status, err, winSize, 3, termcrit, 0, 0.001);
 
         //******************************************************************/
         // Filter currPts and update the lists _corners and _objectPoints: if
@@ -102,7 +101,7 @@ bool ChessboardCameraTrackerKLT::process(
             // if it's a good point copy it in _corners and also copy keep the
             // corresponding _objectPoints
             //******************************************************************/
-            // if..
+            if(status[i] > 0)
             {
 #if DEBUGGING
                 line(view, _corners[i], currPts[i], Scalar(255, 0, 0), 1);
@@ -111,12 +110,12 @@ bool ChessboardCameraTrackerKLT::process(
                 //******************************************************************/
                 // copy the current point in _corners
                 //******************************************************************/
-
+                _corners[k] = currPts[i];
 
                 //******************************************************************/
                 // copy the corresponding _objectPoints
                 //******************************************************************/
-
+                _objectPoints[k] = _objectPoints[i];
 
                 //******************************************************************/
                 // update k
@@ -135,17 +134,16 @@ bool ChessboardCameraTrackerKLT::process(
         //******************************************************************/
         // compute the pose of the camera using mySolvePnPRansac (utility.hpp))
         //******************************************************************/
-
-        //        _vecCorners.push_back(_corners);
-        ////        _vecObjectPoints.push_back(_objectPoints);
-        //        _vecIdx.push_back(_indices);
+        mySolvePnPRansac(_objectPoints, _corners, cam.matK, cam.distCoeff, pose, idxInl);
+        //_vecCorners.push_back(_corners);
+        //_vecObjectPoints.push_back(_objectPoints);
+        //_vecIdx.push_back(_indices);
 
         //******************************************************************/
         // filter the points to remove the outliers. Use filterVector from utility.hpp
         // Filter both the image points and the 3D reference points
         //******************************************************************/
-
-
+        filterVector(_corners, idxInl);
 
         found = true;
     }
@@ -153,7 +151,7 @@ bool ChessboardCameraTrackerKLT::process(
     //******************************************************************/
     // update _prevGrey with the current grey frame
     //******************************************************************/
-
+    _prevGrey = viewGrey;
 
     return found;
 }

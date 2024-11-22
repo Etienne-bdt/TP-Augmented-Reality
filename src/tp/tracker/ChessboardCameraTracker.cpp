@@ -27,28 +27,21 @@ bool ChessboardCameraTracker::process(
 
     // contains the points detected on the chessboard
     vector<Point2f> corners;
-    Mat temp;
-    temp = view.clone();
+
     //******************************************************************/
     // undistort the input image. view at the end must contain the undistorted version
     // of the image.
     //******************************************************************/
-    cout<<cam.distCoeff<<endl;
-    cout<<cam.matK<<endl;
-    if (!cam.matK.empty() && !cam.distCoeff.empty()) {
-        undistort(temp, view, cam.matK, cam.distCoeff);
-    } else {
-        cerr << "Camera matrix or distortion coefficients are empty!" << endl;
-        return false;
-    }
-
+    Mat temp = view.clone();
+    undistort(temp, view, cam.matK, cam.distCoeff);
+    
 
     //******************************************************************/
     // detect the chessboard
     //******************************************************************/
     found = detectChessboard(view, corners, boardSize, pattern);
 
-    // cout << ( (!found ) ? ( "No " ) : ("") ) << "chessboard detected!" << endl;
+    cout << ( (!found ) ? ( "No " ) : ("") ) << "chessboard detected!" << endl;
 
     //******************************************************************/
     // if a chessboard is found, estimate the homography
@@ -69,11 +62,11 @@ bool ChessboardCameraTracker::process(
         // --> see findHomography
         // http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=homography#findhomography
         //******************************************************************/
-        Mat H = findHomography(corners, objectPoints, CV_RANSAC);
+        Mat H = findHomography(objectPoints, corners, CV_RANSAC);
 
-//         cout << "H = " << H << endl << endl;
-//         cout << "corners =" << corners << endl << endl;
-//         cout << "ptsOb =" << objectPoints << endl << endl;
+        //cout << "H = " << H << endl << endl;
+        //cout << "corners =" << corners << endl << endl;
+        //cout << "ptsOb =" << objectPoints << endl << endl;
 
         //******************************************************************/
         // decompose the homography

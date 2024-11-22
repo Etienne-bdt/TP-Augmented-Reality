@@ -47,10 +47,6 @@ bool Camera::init(const std::string& calibFilename)
     fs["image_height"] >> imageSize.height;
 
     fs.release();
-
-    cout << matK << endl;
-    cout << distCoeff << endl;
-
     return true;
 }
 

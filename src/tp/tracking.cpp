@@ -90,7 +90,7 @@ int main(int argc, char** argv)
     //******************************************************************/
     // init the Camera loading the calibration parameters
     //******************************************************************/
-
+    cam.init(calibFilename);
     // processing loop
     while(true)
     {
@@ -114,7 +114,7 @@ int main(int argc, char** argv)
             //******************************************************************/
             // draw the reference on top of the image
             //******************************************************************/
-            drawReferenceSystem(view, cam, cameraPose, 2, 0.1, true);
+            drawReferenceSystem(view, cam, cameraPose, 2, 50, true);
         }
 
         /******************************************************************/

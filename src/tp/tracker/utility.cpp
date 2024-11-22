@@ -236,7 +236,7 @@ void decomposeHomography( const Mat &H, const Mat& matK, Mat& poseMat )
     //******************************************************************/
     //temp contains inv(K)*H
     //******************************************************************/
-
+    temp = matK.inv() * H;
 //     PRINTVAR( temp );
 
     Mat r1, r2, r3, t;

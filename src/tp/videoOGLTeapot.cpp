@@ -76,13 +76,16 @@ void glInit()
     //******************************************************************
     // set the Gouraud shading
     //******************************************************************
-
+    glShadeModel(GL_SMOOTH);
 
     //******************************************************************
     // set the LIGHT0 as a simple white, directional light with direction [1,2,-2]
     //******************************************************************
+    GLfloat light_position[] = {1, 2, -2, 0};
+    GLfloat light_ambient[] = {0.2f, 0.2f, 0.2f, 1.0f};
+    GLfloat light_diffuse[] = {1.0f, 1.0f, 1.0f, 1.0f};
 
-
+    glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
     //******************************************************************
     // set the material properties for the teapot
@@ -90,33 +93,33 @@ void glInit()
     // as you prefer. The teapot in the figure has is mainly gray with
     // ambient 0.7, diffuse 0.8, specular 1.0 and shininess 100
     //******************************************************************
-
-
-
-
-
-
-
-
-
-
+    GLfloat mat_ambient[] = {0.7f, 0.7f, 0.7f, 1.0f};
+    GLfloat mat_diffuse[] = {0.8f, 0.8f, 0.8f, 1.0f};
+    GLfloat mat_specular[] = {1.0f, 1.0f, 1.0f, 1.0f};
+    GLfloat mat_shininess[] = {100.0f};
+    glMaterialfv(GL_FRONT, GL_AMBIENT, mat_ambient);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, mat_diffuse);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, mat_specular);
+    glMaterialfv(GL_FRONT, GL_SHININESS, mat_shininess);
     //******************************************************************
     // enable the lights
     //******************************************************************
-
+    glEnable(GL_LIGHT0);
 
 
     //******************************************************************
     // set the opengl projection matrix to gProjectionMatrix:
     // load the identity and multiply it by gProjectionMatrix using glMultMatrixf
     //******************************************************************
-
-
+    glMatrixMode(GL_PROJECTION);
+    glLoadIdentity();
+    glMultMatrixf(gProjectionMatrix);
 
 
     //******************************************************************
     // set back the modelview mode
     //******************************************************************
+    glMatrixMode(GL_MODELVIEW);
 
 }
 
@@ -188,7 +191,7 @@ void displayFunc()
     //******************************************************************
     // disable the lighting before drawing the background
     //******************************************************************
-
+    glDisable(GL_LIGHT0);
 
     drawBackground();
 
@@ -205,7 +208,9 @@ void displayFunc()
     //******************************************************************
     // apply the modelview matrix gModelViewMatrix using glMultMatrixf
     //******************************************************************
-
+    glMultMatrixf(gModelViewMatrix);
+    glEnable(GL_LIGHT0);
+    glutSolidTeapot(1.0);
 
     // enable the texture for a nice effect ;)
     glDisable(GL_TEXTURE_2D);
@@ -213,12 +218,12 @@ void displayFunc()
     //******************************************************************
     // enable the lighting before drawing the teapot/the object
     //******************************************************************
-
+    glEnable(GL_LIGHTING);
 
     //******************************************************************
     // draw the teapot (the solid version)
     //******************************************************************
-
+    glutSolidTeapot(1.0);
 
     glutSwapBuffers();
     glutPostRedisplay();
@@ -273,6 +278,8 @@ int main(int argc, char** argv)
     dummyMatrix.at<float>(2, 3) = 50;
 
     cout << dummyMatrix << endl;
+    ChessboardCameraTrackerKLT tracker;
+    Mat cameraPose;
 
     /******************************************************************/
     /* READ THE INPUT PARAMETERS - DO NOT MODIFY                      */
@@ -287,12 +294,12 @@ int main(int argc, char** argv)
     //******************************************************************
     // init the Camera loading the calibration parameters
     //******************************************************************
-
+    cam.init(calibFilename);
 
     //******************************************************************
     // get the corresponding projection matrix in OGL format
     //******************************************************************
-
+    cam.getOGLProjectionMatrix(gProjectionMatrix, 10, 10000);
 
     capture.open(videoFilename);
 
@@ -339,12 +346,19 @@ int main(int argc, char** argv)
             }
 
             view0.copyTo(gResultImage);
-
+            if(tracker.process(view0, cameraPose, cam, boardSize, pattern))
+        {
+            Mat temp;
+            cameraPose.convertTo(temp, CV_32F);
+            PRINTVAR(temp);
+            temp.copyTo(dummyMatrix.rowRange(0, 3));
+            PRINTVAR(dummyMatrix);
+            gModelViewMatrix = (float*)Mat(dummyMatrix.t()).data;
+        }
             // set the gModelViewMatrix with the content of the dummy matrix
             // OpenGL uses a column-major order for storing the matrix element, while OpenCV uses
             // a row major order for storing the elements. Hence we need first to convert the dummy matrix
             // to its transpose and only then pass the data pointer to gModelViewMatrix
-            gModelViewMatrix = (float*)Mat(dummyMatrix.t()).data;
 
             cout << endl << endl << "****************** frame " << frameNumber << " ******************" << endl;
 

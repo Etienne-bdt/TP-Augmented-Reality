@@ -92,9 +92,9 @@ int main(int argc, char** argv)
         
         auto t = (double)getTickCount();
         t = ((double)getTickCount() - t) / getTickFrequency();
-
+        
         if( !capture.read(frame) ){
-            cout<<"chessboard detection took"<<t*1000<<"ms"<<endl;
+            cout<<"No Frame to detect"<<endl;
             break;
         }
         

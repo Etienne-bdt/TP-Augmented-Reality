@@ -90,8 +90,7 @@ int main(int argc, char** argv)
     //******************************************************************/
     // init the Camera loading the calibration parameters
     //******************************************************************/
-
-
+    cam.init(calibFilename);
     // processing loop
     while(true)
     {
@@ -100,28 +99,28 @@ int main(int argc, char** argv)
         // get the new frame from capture and copy it to view
         /******************************************************************/
 
-
         /******************************************************************/
         // if no more images to process exit the loop
         /******************************************************************/
-
-
+        if(!capture.read(view)){
+            return EXIT_FAILURE;
+        }
 
         //******************************************************************/
         // process the image with the process method
         //******************************************************************/
-        //if...
+        if(tracker.process(view, cameraPose, cam, boardSize, pattern))
         {
             //******************************************************************/
             // draw the reference on top of the image
             //******************************************************************/
-
+            drawReferenceSystem(view, cam, cameraPose, 2, 50, true);
         }
 
         /******************************************************************/
         // show the image inside the window --> see imshow
         /******************************************************************/
-
+        imshow(WINDOW_NAME, view);
 
         // wait 20ms for user input before processing the next frame
         // Any user input will stop the execution

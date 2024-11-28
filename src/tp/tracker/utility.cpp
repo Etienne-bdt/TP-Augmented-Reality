@@ -108,8 +108,8 @@ void drawReferenceSystem( cv::Mat &rgbimage, const Camera& cam, const cv::Mat &p
     // Add the four 3D points (Point3f) that we can use to draw
     // the reference system to vertex3D. Use <scale> as unit
     //******************************************************************/
-
-
+    
+    vertex3D = {Point3f(0,0,0), Point3f(scale,0,0), Point3f(0,scale,0), Point3f(0,0,scale)};
 
 
 
@@ -122,7 +122,7 @@ void drawReferenceSystem( cv::Mat &rgbimage, const Camera& cam, const cv::Mat &p
     // if it is true we pass a 1x5 zero vector, otherwise the distortion
     //  parameter of cam
     //******************************************************************/
-
+    myProjectPoints(vertex3D, poseMat, cam.matK, (alreadyUndistorted) ? Mat::zeros(1, 5, CV_32F) : cam.distCoeff, imgRefPts);
 
 
 
@@ -137,20 +137,21 @@ void drawReferenceSystem( cv::Mat &rgbimage, const Camera& cam, const cv::Mat &p
     //******************************************************************/
     // draw the line of the x-axis and put "X" at the end
     //******************************************************************/
-
+    line(rgbimage, imgRefPts[0], imgRefPts[1], Scalar(0, 0, 255), thickness);
+    putText(rgbimage, "X", imgRefPts[1], FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 0, 255), 2);
 
 
     //******************************************************************/
     // draw the line of the y-axis and put "Y" at the end
     //******************************************************************/
-
-
+    line(rgbimage, imgRefPts[0], imgRefPts[2], Scalar(0,255,0), thickness);
+    putText(rgbimage, "Y", imgRefPts[2], FONT_HERSHEY_SIMPLEX, 0.5, Scalar(0, 255, 0), 2);
 
     //******************************************************************/
     // draw the line of the z-axis and put "Z" at the end
     //******************************************************************/
-
-
+    line(rgbimage, imgRefPts[0], imgRefPts[3], Scalar(255,0,0), thickness);
+    putText(rgbimage, "Z", imgRefPts[3], FONT_HERSHEY_SIMPLEX, 0.5, Scalar(255, 0, 0), 2);
 
 }
 
@@ -235,46 +236,52 @@ void decomposeHomography( const Mat &H, const Mat& matK, Mat& poseMat )
     //******************************************************************/
     //temp contains inv(K)*H
     //******************************************************************/
-
+    temp = matK.inv() * H;
 //     PRINTVAR( temp );
 
     Mat r1, r2, r3, t;
     //******************************************************************/
     // get r1 and r2 from temp
     //******************************************************************/
-
-
+    r1 = temp.col(0);
+    r2 = temp.col(1);
 
     //******************************************************************/
     // compute lambda
     //******************************************************************/
-
+    double lambda = norm(r1);
 
     //******************************************************************/
     // normalize r1 and r2
     //******************************************************************/
-
-
+    r1 = r1 / lambda;
+    r2 = r2 / lambda;
 
     //******************************************************************/
     // compute r3
     //******************************************************************/
-
+    r3 = r1.cross(r2);
 //     PRINTVAR( r3 );
 
     //******************************************************************/
     // compute t
     //******************************************************************/
-
+    t = temp.col(2)/lambda;
 
     //******************************************************************/
     // create a 3x4 matrix (float) for poseMat
     //******************************************************************/
-
+    poseMat = Mat(3, 4, CV_32F);
+    
 
     //******************************************************************/
     // fill the columns of poseMat with r1 r2 r3 and t
     //******************************************************************/
+    r1.copyTo(poseMat.col(0));
+    r2.copyTo(poseMat.col(1));
+    r3.copyTo(poseMat.col(2));
+    t.copyTo(poseMat.col(3));
+
 
 
 
@@ -324,7 +331,7 @@ void calcChessboardCorners3D( const Size &boardSize, float squareSize, vector<Po
                     // create a Point3f(x,y,0) according to the position j,i and a square
                     // size of squareSize. Add it to corners (using push_back...)
                     /******************************************************************/
-
+                    corners.push_back(Point3f(j * squareSize, i * squareSize, 0));
 
 
                 }
@@ -340,7 +347,7 @@ void calcChessboardCorners3D( const Size &boardSize, float squareSize, vector<Po
                     // that x is generate using the formula (2*j + i % 2)*squareSize
                     //  Add it to corners (using push_back...)
                     /******************************************************************/
-
+                    corners.push_back(Point3f((2*j+ i%2)*squareSize, i*squareSize, 0));
 
 
                 }

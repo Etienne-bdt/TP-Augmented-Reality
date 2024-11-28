@@ -32,15 +32,16 @@ bool ChessboardCameraTracker::process(
     // undistort the input image. view at the end must contain the undistorted version
     // of the image.
     //******************************************************************/
-
-
+    Mat temp = view.clone();
+    undistort(temp, view, cam.matK, cam.distCoeff);
+    
 
     //******************************************************************/
     // detect the chessboard
     //******************************************************************/
+    found = detectChessboard(view, corners, boardSize, pattern);
 
-
-    // cout << ( (!found ) ? ( "No " ) : ("") ) << "chessboard detected!" << endl;
+    cout << ( (!found ) ? ( "No " ) : ("") ) << "chessboard detected!" << endl;
 
     //******************************************************************/
     // if a chessboard is found, estimate the homography
@@ -54,23 +55,23 @@ bool ChessboardCameraTracker::process(
         // create the set of 2D (arbitrary) points of the checkerboard
         // call to calcChessboardCorners
         //******************************************************************/
-
+        calcChessboardCorners(boardSize,25,objectPoints,pattern);
 
         //******************************************************************/
         // estimate the homography
         // --> see findHomography
         // http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=homography#findhomography
         //******************************************************************/
+        Mat H = findHomography(objectPoints, corners, CV_RANSAC);
 
-
-//         cout << "H = " << H << endl << endl;
-//         cout << "corners =" << corners << endl << endl;
-//         cout << "ptsOb =" << objectPoints << endl << endl;
+        //cout << "H = " << H << endl << endl;
+        //cout << "corners =" << corners << endl << endl;
+        //cout << "ptsOb =" << objectPoints << endl << endl;
 
         //******************************************************************/
         // decompose the homography
         //******************************************************************/
-
+        decomposeHomography(H, cam.matK, pose);
     }
 
     return found;

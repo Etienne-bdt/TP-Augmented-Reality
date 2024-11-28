@@ -26,7 +26,6 @@ class Camera
      */
     void getOGLProjectionMatrix(float* proj, float znear, float zfar) const;
 
-  public:
     cv::Mat matK;
 
     cv::Mat distCoeff;

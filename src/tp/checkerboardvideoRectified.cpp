@@ -138,7 +138,7 @@ int main(int argc, char** argv)
                 // --> see findHomography
                 // http://docs.opencv.org/modules/calib3d/doc/camera_calibration_and_3d_reconstruction.html?highlight=homography#findhomography
                 /******************************************************************/
-                Mat H = findHomography( objectPoints, pointbuf, CV_RANSAC);
+                Mat H = findHomography(pointbuf, objectPoints, CV_RANSAC);
 
                 /******************************************************************/
                 // use the estimated homography to rectify the image

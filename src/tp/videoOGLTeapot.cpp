@@ -278,6 +278,8 @@ int main(int argc, char** argv)
     dummyMatrix.at<float>(2, 3) = 50;
 
     cout << dummyMatrix << endl;
+    ChessboardCameraTrackerKLT tracker;
+    Mat cameraPose;
 
     /******************************************************************/
     /* READ THE INPUT PARAMETERS - DO NOT MODIFY                      */
@@ -297,7 +299,7 @@ int main(int argc, char** argv)
     //******************************************************************
     // get the corresponding projection matrix in OGL format
     //******************************************************************
-    cam.getOGLProjectionMatrix()
+    cam.getOGLProjectionMatrix(gProjectionMatrix, 10, 10000);
 
     capture.open(videoFilename);
 
@@ -344,12 +346,19 @@ int main(int argc, char** argv)
             }
 
             view0.copyTo(gResultImage);
-
+            if(tracker.process(view0, cameraPose, cam, boardSize, pattern))
+        {
+            Mat temp;
+            cameraPose.convertTo(temp, CV_32F);
+            PRINTVAR(temp);
+            temp.copyTo(dummyMatrix.rowRange(0, 3));
+            PRINTVAR(dummyMatrix);
+            gModelViewMatrix = (float*)Mat(dummyMatrix.t()).data;
+        }
             // set the gModelViewMatrix with the content of the dummy matrix
             // OpenGL uses a column-major order for storing the matrix element, while OpenCV uses
             // a row major order for storing the elements. Hence we need first to convert the dummy matrix
             // to its transpose and only then pass the data pointer to gModelViewMatrix
-            gModelViewMatrix = (float*)Mat(dummyMatrix.t()).data;
 
             cout << endl << endl << "****************** frame " << frameNumber << " ******************" << endl;
 
